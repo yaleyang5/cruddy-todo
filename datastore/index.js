@@ -93,33 +93,69 @@ exports.readOne = (id, callback) => {
 
 // the update method has three parameters: the id and text of interest, and a callback
 exports.update = (id, text, callback) => {
+  // use readFile, if there's fileData, execute writeFile
+  fs.readFile(`${exports.dataDir}/${id}.txt`, (err, fileData) => {
+    if (err) {
+      callback(err);
+    } else {
+      if (fileData !== undefined) {
+        // use writeFile to change the contents of the file at the id endpoint
+        fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null, text);
+          }
+        });
+      }
+    }
+  });
+
+
   // initialize a variable 'items' to the property at the id specified in the items object
-  var item = items[id];
+  // var item = items[id];
   // if the property is undefined, pass an error into the callback
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    // otherwise, update the value of the property to the text provided
-    items[id] = text;
-    // invoke the callback with no error, and an object of the id and text provided
-    callback(null, { id, text });
-  }
+  // if (!item) {
+  // callback(new Error(`No item with id: ${id}`));
+  // } else {
+  // otherwise, update the value of the property to the text provided
+  // items[id] = text;
+  // invoke the callback with no error, and an object of the id and text provided
+  // callback(null, { id, text });
+  // }
 };
 
 
 // create a delete method on the export object. This method takes the target id and a callback as parameters.
 exports.delete = (id, callback) => {
+  // read file at id to make sure it exists
+  fs.readFile(`${exports.dataDir}/${id}.txt`, (err, fileData) => {
+    if (err) {
+      callback(err);
+    } else {
+      // if it exists, use unlink to delete the file
+      fs.unlink(`${exports.dataDir}/${id}.txt`, (err) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback();
+        }
+      });
+    }
+  });
+
+
   // initialize the items variable to the value stored in the items object at the id provided
-  var item = items[id];
+  // var item = items[id];
   // delete the provided property
-  delete items[id];
-  if (!item) {
-    // report an error if item not found
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    // execute the callback, but no arguments are provided
-    callback();
-  }
+  // delete items[id];
+  // if (!item) {
+  // report an error if item not found
+  // callback(new Error(`No item with id: ${id}`));
+  // } else {
+  // execute the callback, but no arguments are provided
+  // callback();
+  // }
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
