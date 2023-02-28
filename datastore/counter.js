@@ -16,16 +16,17 @@ const zeroPaddedNumber = (num) => {
   return sprintf('%05d', num);
 };
 
+
 // the readCounter function takes a callback as its sole parameter
 const readCounter = (callback) => {
   // the fs.readFile() method is invoked. It takes two parameters: a filename, and a callback
   fs.readFile(exports.counterFile, (err, fileData) => {
     if (err) {
       // *** assume that this error only happens when there is no file in project ***
-      callback(null, 0);
+      return callback(null, 0);
     } else {
       // executes the callback provided passing in null as the error, and the data from the file turned into type 'number'. I surmise the counter will be coerced into a string, so it must be returned to a number.
-      return callback(null, Number(fileData));
+      callback(null, Number(fileData));
     }
   });
 };
@@ -41,7 +42,7 @@ const writeCounter = (count, callback) => {
       throw ('error writing counter');
     } else {
       // if there is no error, invoke the callback with the padded count
-      return callback(null, counterString);
+      callback(null, counterString);
     }
   });
 };
@@ -60,7 +61,7 @@ exports.getNextUniqueId = (callback) => {
   // use the readCounter method to return the current counter number. Save the evaluated result as a variable.
   // pass that variable incremented by 1 into the writeCounter method
   // link this to another callback later
-  return readCounter((err, counterNum) => {
+  readCounter((err, counterNum) => {
     // check for error
     if (err) {
       throw new Error('readCounter Callback Error: could not get counterNum');
@@ -72,12 +73,13 @@ exports.getNextUniqueId = (callback) => {
           throw new Error('writeCounter Callback Error: could not get counterString');
         } else {
           // otherwise, callback with counterString
-          return callback(null, counterString);
+          callback(null, counterString);
         }
       });
     }
   });
   // // return the value of the new counter variable
+  // console.log('counter: ', counter);
   // return counter;
   //------------------------
   // increment the counter variable that this function is closed over

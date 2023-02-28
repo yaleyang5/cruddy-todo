@@ -9,33 +9,59 @@ var items = {};
 
 // add the create method to the exports object. create takes two arguments: text and a callback
 exports.create = (text, callback) => {
-  // create an error handler
-
   // pass an id and a callback into getNextUniqueId();
   // err, id, callback
-  var id = counter.getNextUniqueId((err, nextId) => {
+  counter.getNextUniqueId((err, id) => {
     if (err) {
       throw new Error('getNextUniqueId Callback Error: could not get nextId');
     } else {
-      return nextId;
+      // return nextId
+      let fileName = path.join(exports.dataDir, `${id}.txt`);
+      fs.writeFile(fileName, text, (err) => {
+        if (err) {
+          throw new Error(`could not write to ${id}.txt`);
+        } else {
+          callback(null, { id, text });
+        }
+      });
     }
+    // '/Users/aidan/Programming/HackReactor/Week 4/rfp2302-cruddy-todo/datastore/index.js'
   });
-  // create a property on the object items with a key of id (the counter), and a value of the text passed into this function
-  items[id] = text;
+
+  // items[id] = text;
+  // console.log(items);
+  // define a variable (string) to store pathName to new file (use path.join(currentDirectory, id))
+
+  // then write file with path name, text, and callback as arguments
   // invoke the callback with two arguments, null (because there is no error if this function was executed), and an object containing the id and text
-  callback(null, { id, text });
 };
 
 
 // export the readAll method. It takes in a callback as its sole parameter.
 exports.readAll = (callback) => {
-  // define a var 'data' and initialize it to array returned by invoking the map method on the items object
-  var data = _.map(items, (text, id) => {
-    // each element in the array will be an object of the id and the text associated with it.
-    return { id, text };
+  // use readdir to create an array of all file names and iterate over the array with map
+  fs.readdir(exports.dataDir, (err, files) => {
+    if (err) {
+      throw new Error('could not readdir');
+    } else {
+      // map over the files array
+      callback(null, files.map((id) => {
+        // return an object with id and text
+        // call readFile method on each file
+        id = id.substring(0, 5);
+        return { id, text: id};
+      }));
+    }
   });
+
+  //---------------
+  // define a var 'data' and initialize it to array returned by invoking the map method on the items object
+  // var data = _.map(items, (text, id) => {
+  //   // each element in the array will be an object of the id and the text associated with it.
+  //   return { id, text };
+  // });
   // invoke the callback. there is no error, so null will be the first arg. Pass in the array of data as the second argument.
-  callback(null, data);
+  // callback(null, data);
 };
 
 // the readOne method has two parameters: the id of the target text, and a callback
