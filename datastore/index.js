@@ -66,15 +66,28 @@ exports.readAll = (callback) => {
 
 // the readOne method has two parameters: the id of the target text, and a callback
 exports.readOne = (id, callback) => {
+  // invoke readFile with the id as the endpoint
+  fs.readFile(`${exports.dataDir}/${id}.txt`, (err, text) => {
+    // setTimeout(() => {console.log(`${exports.dataDir}/${id}.txt`)}, 1000);
+    if (err) {
+      callback(err);
+    } else {
+      // invoke the callback passing in null and the fileData
+      callback(null, {id, text: text.toString()});
+    }
+  });
+
+
+
   // initialize the variable 'text' to the text retrieved from the items object at the id provided
-  var text = items[id];
+  // var text = items[id];
   // if the property at the id key is undefined, pass an error into the callback
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    // if the property exists, there is no error. Pass the id and text to the callback.
-    callback(null, { id, text });
-  }
+  // if (!text) {
+  // callback(new Error(`No item with id: ${id}`));
+  // } else {
+  // if the property exists, there is no error. Pass the id and text to the callback.
+  // callback(null, { id, text });
+  // }
 };
 
 
