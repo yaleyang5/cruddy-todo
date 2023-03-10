@@ -4,7 +4,7 @@ const sprintf = require('sprintf-js').sprintf;
 
 // var counter = 0;
 
-// Private helper functions ////////////////////////////////////////////////////
+// Private helper functions /////////////////////////////////////
 
 // Zero padded numbers can only be represented as strings.
 // If you don't know what a zero-padded number is, read the
